@@ -98,4 +98,6 @@ class LibraryRepositoryTest {
         // 3. 권한(Type)도 맞는지 확인해보면 좋습니다.
         assertEquals("ADMIN", user.getRole(), "사용자 권한이 'ADMIN'이어야 합니다.");
     }
+
+
 }
