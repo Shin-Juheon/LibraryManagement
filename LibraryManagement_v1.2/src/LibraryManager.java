@@ -191,4 +191,15 @@ public class LibraryManager {
             System.out.println("[오류] 진단 중 예외 발생: " + e.getMessage());
         }
     }
+
+    /**
+     * 입력된 문자열이 올바른 IPv4 주소 형식인지 검증합니다.
+     *
+     * @see LibraryManager#checkServerStatus(String)
+     * @see <a href="https://github.com/Shin-Juheon/LibraryManagement/issues/7">
+     */
+    private void isValidIp(String ip) {
+
+        System.out.println();
+    }
 }
