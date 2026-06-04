@@ -172,26 +172,32 @@ public class LibraryManager {
         return bookMap;
     }
 
+//    public void checkServerStatus(String ip) {
+//        try {
+//            // [수정] cmd.exe /c 를 앞에 붙여서 쉘이 명령어를 해석하게 만듭니다.
+//            String command = "cmd.exe /c ping -n 1 " + ip;
+//
+//            System.out.println("[시스템 실행 명령어]: " + command);
+//
+//            Process process = Runtime.getRuntime().exec(command);
+//            // 한글 깨짐 방지를 위해 EUC-KR 유지
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "EUC-KR"));
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                System.out.println(line);
+//            }
+//        } catch (Exception e) {
+//            System.out.println("[오류] 진단 중 예외 발생: " + e.getMessage());
+//        }
+//    }
     public void checkServerStatus(String ip) {
-        try {
-            // [수정] cmd.exe /c 를 앞에 붙여서 쉘이 명령어를 해석하게 만듭니다.
-            String command = "cmd.exe /c ping -n 1 " + ip;
-
-            System.out.println("[시스템 실행 명령어]: " + command);
-
-            Process process = Runtime.getRuntime().exec(command);
-            // 한글 깨짐 방지를 위해 EUC-KR 유지
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "EUC-KR"));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println(line);
-            }
-        } catch (Exception e) {
-            System.out.println("[오류] 진단 중 예외 발생: " + e.getMessage());
+        if (!isValidIp(ip)) {
+            System.out.println(
+                    "[오류] 잘못된 IP 형식입니다.");
+            return;
         }
     }
-
     /**
      * 입력된 문자열이 올바른 IPv4 주소 형식인지 검증합니다.
      *
