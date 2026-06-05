@@ -237,7 +237,7 @@ public class LibraryManager {
      * @see LibraryManager#checkServerStatus(String)
      * @see <a href="https://github.com/Shin-Juheon/LibraryManagement/issues/7">
      */
-    private boolean isValidIp(String ip) {
+    boolean isValidIp(String ip) {
         String regex =
                 "^((25[0-5]|2[0-4]\\d|1\\d\\d|\\d?\\d)\\.){3}" +
                         "(25[0-5]|2[0-4]\\d|1\\d\\d|\\d?\\d)$";

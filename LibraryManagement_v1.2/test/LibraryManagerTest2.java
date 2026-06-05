@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class LibraryManagerTest {
+class LibraryManagerTest2 {
 
     private final LibraryManager manager =
             new LibraryManager(
