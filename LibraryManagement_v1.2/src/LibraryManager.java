@@ -191,16 +191,49 @@ public class LibraryManager {
 //            System.out.println("[오류] 진단 중 예외 발생: " + e.getMessage());
 //        }
 //    }
+
+    /**
+     * 서버의 네트워크 상태를 진단합니다.
+     * @param ip 진단할 대상 서버의 IPv4 주소
+     * @see LibraryManager#isValidIp(String)
+     * @see <a href="https://github.com/Shin-Juheon/LibraryManagement/issues/7">
+     */
     public void checkServerStatus(String ip) {
+
         if (!isValidIp(ip)) {
             System.out.println(
                     "[오류] 잘못된 IP 형식입니다.");
             return;
         }
+        try {
+
+            ProcessBuilder pb =
+                    new ProcessBuilder(
+                            "ping",
+                            "-n",
+                            "1",
+                            ip);
+
+            Process process = pb.start();
+
+            BufferedReader reader =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    process.getInputStream(),
+                                    "EUC-KR"));
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (Exception e) {
+            System.out.println(
+                    "[오류] 네트워크 진단 실패");
+        }
     }
+
     /**
      * 입력된 문자열이 올바른 IPv4 주소 형식인지 검증합니다.
-     *
      * @see LibraryManager#checkServerStatus(String)
      * @see <a href="https://github.com/Shin-Juheon/LibraryManagement/issues/7">
      */
