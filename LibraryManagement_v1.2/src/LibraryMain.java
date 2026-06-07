@@ -11,6 +11,8 @@ import java.util.*;
 public class LibraryMain {
     private static LibraryManager manager;
     private static Scanner sc = new Scanner(System.in);
+    private static final Map<String, Integer> failCountMap = new HashMap<>();
+    private static final Map<String, Long> lockTimeMap = new HashMap<>();
 
     public static void main(String[] args) {
         LibraryRepository repo = new LibraryRepository();
@@ -39,12 +41,41 @@ public class LibraryMain {
         }
     }
 
+//    /**
+//     * 사용자 로그인을 수행합니다.
+//     * <p>성공할 때까지 아이디와 비밀번호 입력을 반복 요청합니다.</p>
+//     *
+//     * @return 로그인 성공 여부 (true: 성공)
+//     * @see LibraryManager#login(String, String)
+//     */
+//    private static boolean performLogin() {
+//        while (true) {
+//            System.out.println("\n========= CSV 로그인 시스템 =========");
+//            System.out.print("아이디: ");
+//            String id = sc.nextLine();
+//
+//            // https://github.com/Shin-Juheon/LibraryManagement/issues/5
+//            char firstInput = id.charAt(0);
+//            if (Character.isDigit(firstInput)) {
+//                System.out.println("다시 입력하세요.");
+//                continue;
+//            }
+//            System.out.print("비밀번호: ");
+//            String pw = sc.nextLine();
+//
+//
+//            if (manager.login(id, pw)) return true;
+//            System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
+//        }
+//    }
+
     /**
      * 사용자 로그인을 수행합니다.
      * <p>성공할 때까지 아이디와 비밀번호 입력을 반복 요청합니다.</p>
      *
      * @return 로그인 성공 여부 (true: 성공)
      * @see LibraryManager#login(String, String)
+     * @see <a href='https://github.com/Shin-Juheon/LibraryManagement/issues/10'>
      */
     private static boolean performLogin() {
         while (true) {
@@ -58,10 +89,19 @@ public class LibraryMain {
                 System.out.println("다시 입력하세요.");
                 continue;
             }
+            Long unlockTime = lockTimeMap.get(id);
+
+            if (unlockTime != null &&
+                    System.currentTimeMillis() < unlockTime) {
+
+                System.out.println(
+                        "[보안] 현재 로그인할 수 없습니다. 잠시 후 다시 시도하세요."
+                );
+                continue;
+            }
             System.out.print("비밀번호: ");
             String pw = sc.nextLine();
-
-
+            
             if (manager.login(id, pw)) return true;
             System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
         }
