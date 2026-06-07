@@ -83,6 +83,12 @@ public class LibraryMain {
             System.out.print("아이디: ");
             String id = sc.nextLine();
 
+            // 공백 입력 방지 코드
+            if(id.isBlank()) {
+                System.out.println("아이디를 입력하세요.");
+                continue;
+            }
+
             // https://github.com/Shin-Juheon/LibraryManagement/issues/5
             char firstInput = id.charAt(0);
             if (Character.isDigit(firstInput)) {
