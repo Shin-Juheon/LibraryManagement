@@ -108,7 +108,17 @@ public class LibraryMain {
             System.out.print("비밀번호: ");
             String pw = sc.nextLine();
 
-            if (manager.login(id, pw)) return true;
+            // 로그인 성공
+            if (manager.login(id, pw)) {
+                failCountMap.remove(id);
+                lockTimeMap.remove(id);
+                return true;
+            }
+
+            // 로그인 실패
+
+            // 5회 실패
+            
             System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
         }
     }
