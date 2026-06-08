@@ -11,6 +11,8 @@ import java.util.*;
 public class LibraryMain {
     private static LibraryManager manager;
     private static Scanner sc = new Scanner(System.in);
+    private static final Map<String, Integer> failCountMap = new HashMap<>();
+    private static final Map<String, Long> lockTimeMap = new HashMap<>();
 
     public static void main(String[] args) {
         LibraryRepository repo = new LibraryRepository();
@@ -39,12 +41,41 @@ public class LibraryMain {
         }
     }
 
+//    /**
+//     * 사용자 로그인을 수행합니다.
+//     * <p>성공할 때까지 아이디와 비밀번호 입력을 반복 요청합니다.</p>
+//     *
+//     * @return 로그인 성공 여부 (true: 성공)
+//     * @see LibraryManager#login(String, String)
+//     */
+//    private static boolean performLogin() {
+//        while (true) {
+//            System.out.println("\n========= CSV 로그인 시스템 =========");
+//            System.out.print("아이디: ");
+//            String id = sc.nextLine();
+//
+//            // https://github.com/Shin-Juheon/LibraryManagement/issues/5
+//            char firstInput = id.charAt(0);
+//            if (Character.isDigit(firstInput)) {
+//                System.out.println("다시 입력하세요.");
+//                continue;
+//            }
+//            System.out.print("비밀번호: ");
+//            String pw = sc.nextLine();
+//
+//
+//            if (manager.login(id, pw)) return true;
+//            System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
+//        }
+//    }
+
     /**
      * 사용자 로그인을 수행합니다.
-     * <p>성공할 때까지 아이디와 비밀번호 입력을 반복 요청합니다.</p>
+     * <p>로그인 실패 횟수 제한을 걸어 실패 횟수를 넘었을시 잠금상태가 된다. 이후 로그인 성공 시 횟수 카운트가 초기화된다.</p>
      *
      * @return 로그인 성공 여부 (true: 성공)
      * @see LibraryManager#login(String, String)
+     * @see <a href='https://github.com/Shin-Juheon/LibraryManagement/issues/10'>
      */
     private static boolean performLogin() {
         while (true) {
@@ -52,18 +83,64 @@ public class LibraryMain {
             System.out.print("아이디: ");
             String id = sc.nextLine();
 
+            // 공백 입력 방지 코드
+            if(id.isBlank()) {
+                System.out.println("아이디를 입력하세요.");
+                continue;
+            }
             // https://github.com/Shin-Juheon/LibraryManagement/issues/5
             char firstInput = id.charAt(0);
             if (Character.isDigit(firstInput)) {
                 System.out.println("다시 입력하세요.");
                 continue;
             }
+            Long unlockTime = lockTimeMap.get(id);
+
+            if (unlockTime != null &&
+                    System.currentTimeMillis() < unlockTime) {
+
+                System.out.println(
+                        "[보안] 현재 로그인할 수 없습니다. 잠시 후 다시 시도하세요."
+                );
+                continue;
+            }
             System.out.print("비밀번호: ");
             String pw = sc.nextLine();
 
+            // 로그인 성공
+            if (manager.login(id, pw)) {
+                failCountMap.remove(id);
+                lockTimeMap.remove(id);
+                return true;
+            }
 
-            if (manager.login(id, pw)) return true;
-            System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
+            // 로그인 실패
+            int failCount = failCountMap.getOrDefault(id, 0) + 1;
+            failCountMap.put(id, failCount);
+
+            // 5회 실패
+            if (failCount >= 5) {
+
+                long lockDuration = 3 * 60 * 1000; // 유저 계정 3분
+
+                if (id.equalsIgnoreCase("admin")) {
+                    lockDuration = 10 * 60 * 1000; // 관리자 계정 10분
+                }
+                lockTimeMap.put(
+                        id,
+                        System.currentTimeMillis() + lockDuration
+                );
+                failCountMap.put(id, 0);
+
+                System.out.println(
+                        "[보안] 로그인 실패 횟수 초과로 계정이 일시적으로 잠금되었습니다."
+                );
+                continue;
+            }
+
+            System.out.println(
+                    "[오류] 아이디 또는 비밀번호가 틀렸습니다."
+            );
         }
     }
 
