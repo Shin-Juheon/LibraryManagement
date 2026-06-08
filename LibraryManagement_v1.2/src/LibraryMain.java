@@ -71,7 +71,7 @@ public class LibraryMain {
 
     /**
      * 사용자 로그인을 수행합니다.
-     * <p>성공할 때까지 아이디와 비밀번호 입력을 반복 요청합니다.</p>
+     * <p>로그인 실패 횟수 제한을 걸어 실패 횟수를 넘었을시 잠금상태가 된다. 이후 로그인 성공 시 횟수 카운트가 초기화된다.</p>
      *
      * @return 로그인 성공 여부 (true: 성공)
      * @see LibraryManager#login(String, String)
