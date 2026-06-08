@@ -59,4 +59,21 @@ public class LibraryMainTest {
         }
         assertTrue(lockTimeMap.containsKey("user01"));
     }
+    @Test
+    void accountNotLocked() {
+
+        Map<String, Integer> failCountMap = new HashMap<>();
+        Map<String, Long> lockTimeMap = new HashMap<>();
+
+        String id = "user01";
+
+        for(int i = 0; i < 4; i++) {
+
+            int failCount =
+                    failCountMap.getOrDefault(id, 0) + 1;
+
+            failCountMap.put(id, failCount);
+        }
+        assertFalse(lockTimeMap.containsKey("user01"));
+    }
 }
