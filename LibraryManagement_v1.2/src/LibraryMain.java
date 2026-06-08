@@ -88,7 +88,6 @@ public class LibraryMain {
                 System.out.println("아이디를 입력하세요.");
                 continue;
             }
-
             // https://github.com/Shin-Juheon/LibraryManagement/issues/5
             char firstInput = id.charAt(0);
             if (Character.isDigit(firstInput)) {
@@ -116,10 +115,32 @@ public class LibraryMain {
             }
 
             // 로그인 실패
+            int failCount = failCountMap.getOrDefault(id, 0) + 1;
+            failCountMap.put(id, failCount);
 
             // 5회 실패
-            
-            System.out.println("[오류] 아이디 또는 비밀번호가 틀렸습니다.");
+            if (failCount >= 5) {
+
+                long lockDuration = 3 * 60 * 1000; // 유저 계정 3분
+
+                if (id.equalsIgnoreCase("admin")) {
+                    lockDuration = 10 * 60 * 1000; // 관리자 계정 10분
+                }
+                lockTimeMap.put(
+                        id,
+                        System.currentTimeMillis() + lockDuration
+                );
+                failCountMap.put(id, 0);
+
+                System.out.println(
+                        "[보안] 로그인 실패 횟수 초과로 계정이 일시적으로 잠금되었습니다."
+                );
+                continue;
+            }
+
+            System.out.println(
+                    "[오류] 아이디 또는 비밀번호가 틀렸습니다."
+            );
         }
     }
 
